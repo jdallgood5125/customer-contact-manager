@@ -1,9 +1,14 @@
+// Developer: Joshua Allgood
+// Date: September 13, 2026
+// Purpose: Runs the customer contact manager and handles user input.
+
 package com.customercontactmanager;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        // Create the manager and load the initial sample customers
         CustomerManager manager = new CustomerManager();
 
         manager.addCustomer(new Customer(
@@ -20,9 +25,11 @@ public class Main {
                 "555-0102"
         ));
 
+        // Set up user input and the menu loop.
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
+        // Continue displaying the menu until the user chooses Exit.
         while (running) {
             System.out.println("\nCustomer Contact Manager");
             System.out.println("1. List Customers");
@@ -35,6 +42,7 @@ public class Main {
             String choice = readText(scanner, "Choose an option: ");
 
             switch (choice) {
+                // Display all stored customers.
                 case "1":
                     if (manager.getCustomers().isEmpty()) {
                         System.out.println("No customers found.");
@@ -44,7 +52,7 @@ public class Main {
                         }
                     }
                     break;
-
+                // Find and display one customer by ID.
                 case "2":
                     int findId = readInt(
                             scanner,
@@ -61,6 +69,7 @@ public class Main {
                     }
                     break;
 
+                // Collect information and add a new customer.
                 case "3":
                     int newId;
 
@@ -102,6 +111,7 @@ public class Main {
                     System.out.println("Customer added.");
                     break;
 
+                // Find an existing customer and update its information.
                 case "4":
                     int updateId = readInt(
                             scanner,
@@ -141,6 +151,7 @@ public class Main {
                     System.out.println("Customer updated.");
                     break;
 
+                // Remove a customer by ID.
                 case "5":
                     int removeId = readInt(
                             scanner,
@@ -157,6 +168,7 @@ public class Main {
                     }
                     break;
 
+                // End the application.
                 case "6":
                     running = false;
                     System.out.println("Goodbye!");
@@ -172,6 +184,7 @@ public class Main {
         scanner.close();
     }
 
+    // Read and validate numeric input
     private static int readInt(Scanner scanner, String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -185,6 +198,7 @@ public class Main {
         }
     }
 
+    // Read text text and reject blank values.
     private static String readText(Scanner scanner, String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -198,6 +212,7 @@ public class Main {
         }
     }
 
+    // Validate that an email contains basic email characters.
     private static String readEmail(Scanner scanner, String prompt) {
         while (true) {
             String email = readText(scanner, prompt);
@@ -210,6 +225,7 @@ public class Main {
         }
     }
 
+    // Validate that a phone number contains at least seven digits.
     private static String readPhone(Scanner scanner, String prompt) {
         while (true) {
             String phone = readText(scanner, prompt);
