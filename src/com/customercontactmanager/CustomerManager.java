@@ -33,4 +33,18 @@ public class CustomerManager {
 
         return false;
     }
+
+    public boolean updateCustomer(int id, String name, String email, String phone) {
+        Customer customer = findCustomerById(id);
+
+        if (customer != null) {
+            customer.setName(name);
+            customer.setEmail(email);
+            customer.setPhone(phone);
+            return true;
+        }
+
+        return false;
+    }
+
 }
