@@ -46,8 +46,13 @@ public class Main {
                     break;
 
                 case "2":
-                    int findId = readInt(scanner, "Enter customer ID: ");
-                    Customer foundCustomer = manager.findCustomerById(findId);
+                    int findId = readInt(
+                            scanner,
+                            "Enter customer ID: "
+                    );
+
+                    Customer foundCustomer =
+                            manager.findCustomerById(findId);
 
                     if (foundCustomer != null) {
                         System.out.println(foundCustomer);
@@ -60,20 +65,35 @@ public class Main {
                     int newId;
 
                     while (true) {
-                        newId = readInt(scanner, "Enter customer ID: ");
+                        newId = readInt(
+                                scanner,
+                                "Enter customer ID: "
+                        );
 
                         if (manager.findCustomerById(newId) == null) {
                             break;
                         }
 
                         System.out.println(
-                                "A customer with that ID already exists. Try again."
+                                "A customer with that ID already exists. "
+                                        + "Try again."
                         );
                     }
 
-                    String name = readText(scanner, "Enter customer name: ");
-                    String email = readText(scanner, "Enter customer email: ");
-                    String phone = readText(scanner, "Enter customer phone: ");
+                    String name = readText(
+                            scanner,
+                            "Enter customer name: "
+                    );
+
+                    String email = readEmail(
+                            scanner,
+                            "Enter customer email: "
+                    );
+
+                    String phone = readPhone(
+                            scanner,
+                            "Enter customer phone: "
+                    );
 
                     manager.addCustomer(
                             new Customer(newId, name, email, phone)
@@ -96,12 +116,20 @@ public class Main {
                         break;
                     }
 
-                    String updatedName =
-                            readText(scanner, "Enter new name: ");
-                    String updatedEmail =
-                            readText(scanner, "Enter new email: ");
-                    String updatedPhone =
-                            readText(scanner, "Enter new phone: ");
+                    String updatedName = readText(
+                            scanner,
+                            "Enter new name: "
+                    );
+
+                    String updatedEmail = readEmail(
+                            scanner,
+                            "Enter new email: "
+                    );
+
+                    String updatedPhone = readPhone(
+                            scanner,
+                            "Enter new phone: "
+                    );
 
                     manager.updateCustomer(
                             updateId,
@@ -167,6 +195,31 @@ public class Main {
             }
 
             System.out.println("This field cannot be blank.");
+        }
+    }
+
+    private static String readEmail(Scanner scanner, String prompt) {
+        while (true) {
+            String email = readText(scanner, prompt);
+
+            if (email.contains("@") && email.contains(".")) {
+                return email;
+            }
+
+            System.out.println("Please enter a valid email address.");
+        }
+    }
+
+    private static String readPhone(Scanner scanner, String prompt) {
+        while (true) {
+            String phone = readText(scanner, prompt);
+            String digitsOnly = phone.replaceAll("\\D", "");
+
+            if (digitsOnly.length() >= 7) {
+                return phone;
+            }
+
+            System.out.println("Please enter a valid phone number.");
         }
     }
 }
