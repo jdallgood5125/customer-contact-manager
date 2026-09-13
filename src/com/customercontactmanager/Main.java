@@ -7,11 +7,17 @@ public class Main {
         CustomerManager manager = new CustomerManager();
 
         manager.addCustomer(new Customer(
-                1, "John Smith", "john.smith@email.com", "555-0101"
+                1,
+                "John Smith",
+                "john.smith@email.com",
+                "555-0101"
         ));
 
         manager.addCustomer(new Customer(
-                2, "Jane Doe", "jane.doe@email.com", "555-0102"
+                2,
+                "Jane Doe",
+                "jane.doe@email.com",
+                "555-0102"
         ));
 
         Scanner scanner = new Scanner(System.in);
@@ -51,17 +57,37 @@ public class Main {
                     break;
 
                 case "3":
-                    int newId = readInt(scanner, "Enter customer ID: ");
+                    int newId;
+
+                    while (true) {
+                        newId = readInt(scanner, "Enter customer ID: ");
+
+                        if (manager.findCustomerById(newId) == null) {
+                            break;
+                        }
+
+                        System.out.println(
+                                "A customer with that ID already exists. Try again."
+                        );
+                    }
+
                     String name = readText(scanner, "Enter customer name: ");
                     String email = readText(scanner, "Enter customer email: ");
                     String phone = readText(scanner, "Enter customer phone: ");
 
-                    manager.addCustomer(new Customer(newId, name, email, phone));
+                    manager.addCustomer(
+                            new Customer(newId, name, email, phone)
+                    );
+
                     System.out.println("Customer added.");
                     break;
 
                 case "4":
-                    int updateId = readInt(scanner, "Enter customer ID to update: ");
+                    int updateId = readInt(
+                            scanner,
+                            "Enter customer ID to update: "
+                    );
+
                     Customer customerToUpdate =
                             manager.findCustomerById(updateId);
 
@@ -70,9 +96,12 @@ public class Main {
                         break;
                     }
 
-                    String updatedName = readText(scanner, "Enter new name: ");
-                    String updatedEmail = readText(scanner, "Enter new email: ");
-                    String updatedPhone = readText(scanner, "Enter new phone: ");
+                    String updatedName =
+                            readText(scanner, "Enter new name: ");
+                    String updatedEmail =
+                            readText(scanner, "Enter new email: ");
+                    String updatedPhone =
+                            readText(scanner, "Enter new phone: ");
 
                     manager.updateCustomer(
                             updateId,
@@ -90,7 +119,8 @@ public class Main {
                             "Enter customer ID to remove: "
                     );
 
-                    boolean removed = manager.removeCustomerById(removeId);
+                    boolean removed =
+                            manager.removeCustomerById(removeId);
 
                     if (removed) {
                         System.out.println("Customer removed.");
