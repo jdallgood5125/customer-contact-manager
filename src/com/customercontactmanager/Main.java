@@ -19,7 +19,9 @@ public class Main {
             System.out.println("1. List Customers");
             System.out.println("2. Find Customer");
             System.out.println("3. Add Customer");
-            System.out.println("4. Exit");
+            System.out.println("4. Update Customer");
+            System.out.println("5. Remove Customer");
+            System.out.println("6. Exit");
             System.out.print("Choose an option: ");
 
             String choice = scanner.nextLine();
@@ -56,6 +58,43 @@ public class Main {
                     break;
 
                 case "4":
+                    System.out.print("Enter Customer ID to update: ");
+                    int updatedId = Integer.parseInt(scanner.nextLine());
+
+                    Customer customerToUpdate = manager.findCustomerById(updatedId);
+                        if (customerToUpdate == null) {
+                            System.out.println("Customer not found.");
+                            break;
+                        }
+
+                    System.out.print("Enter new name: ");
+                        String newName = scanner.nextLine();
+
+                    System.out.print("Enter new email: ");
+                        String newEmail = scanner.nextLine();
+
+                    System.out.print("Enter new phone: ");
+                        String newPhone = scanner.nextLine();
+
+                   manager.updateCustomer(updatedId, newName, newEmail, newPhone);
+
+                   System.out.println("Customer updated.");
+                   break;
+
+                case "5":
+                    System.out.print("Enter customer ID to remove: ");
+                    int removeId = Integer.parseInt(scanner.nextLine());
+
+                    boolean removed = manager.removeCustomerById(removeId);
+
+                    if (removed) {
+                        System.out.println("Customer removed.");
+                    } else {
+                        System.out.println("Customer not found.");
+                    }
+                    break;
+
+                case "6":
                     running = false;
                     System.out.println("Goodbye!");
                     break;
