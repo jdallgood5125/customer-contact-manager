@@ -6,8 +6,13 @@ import java.util.List;
 public class CustomerManager {
     private final List<Customer> customers = new ArrayList<>();
 
-    public void addCustomer(Customer customer) {
+    public boolean addCustomer(Customer customer){
+        if (findCustomerById(customer.getId()) != null){
+            return false;
+        }
+
         customers.add(customer);
+        return true;
     }
 
     public List<Customer> getCustomers() {
