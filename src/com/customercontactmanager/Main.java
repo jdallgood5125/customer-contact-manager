@@ -123,12 +123,16 @@ public class Main {
                             "Enter customer phone: "
                     );
 
-                    manager.addCustomer(
+                    boolean added = manager.addCustomer(
                             new Customer(newId, name, email, phone)
                     );
 
-                    storage.saveCustomers(manager.getCustomers());
-                    System.out.println("Customer added.");
+                    if (added) {
+                        storage.saveCustomers(manager.getCustomers());
+                        System.out.println("Customer added.");
+                    } else {
+                        System.out.println("A customer with that ID already exists.");
+                    }
                     break;
 
                 // Find an existing customer and update its information.
@@ -161,15 +165,19 @@ public class Main {
                             "Enter new phone: "
                     );
 
-                    manager.updateCustomer(
+                    boolean updated = manager.updateCustomer(
                             updateId,
                             updatedName,
                             updatedEmail,
                             updatedPhone
                     );
 
-                    storage.saveCustomers(manager.getCustomers());
-                    System.out.println("Customer updated.");
+                    if (updated) {
+                        storage.saveCustomers(manager.getCustomers());
+                        System.out.println("Customer updated.");
+                    } else {
+                        System.out.println("Customer not found.");
+                    }
                     break;
 
                 // Remove a customer by ID.
