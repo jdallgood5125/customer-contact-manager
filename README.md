@@ -1,47 +1,82 @@
 # Customer Contact Manager
 
-This is a Java console program I built to practice managing customer contact information.
+This is a Java application I built to practice managing customer contact information.
 
-The program currently allows me to:
+The project includes both a console version and a Swing graphical interface.
 
-- View all customers
+## Features
+
+- List all customers
 - Find a customer by ID
-- Add a customer
-- Update a customer
+- Add a new customer
+- Update customer information
 - Remove a customer
-- Check for duplicate IDs
-- Validate email, phone, and numeric input
-- Save customer information to a CSV file
+- Prevent duplicate customer IDs
+- Validate menu, email, phone, and numeric ID input
+- Search customers in the GUI
+- Use structured Add and Update forms
+- Save customer data between program runs
 
-## Running the Program
+## Technologies
 
-This project can be run in IntelliJ IDEA or another Java-compatible IDE.
+- Java
+- Swing
+- IntelliJ IDEA
+- Git and GitHub
+- CSV file storage
 
-In IntelliJ IDEA:
+## Project Files
 
-1. Open the project.
-2. Open `src/com/customercontactmanager/Main.java`.
-3. Click the green Run button next to `main`.
-4. Use the menu in the Run window.
+- `Main.java` handles the console menu and user input.
+- `SwingMain.java` provides the graphical interface.
+- `Customer.java` represents a customer.
+- `CustomerManager.java` manages customer records.
+- `CustomerFileStorage.java` loads and saves customer data.
 
-## Testing the Program
+## Running the Console Version
 
-Try each menu option:
-
-1. List the existing customers.
-2. Find a customer using an existing ID.
-3. Add a customer with a unique ID.
-4. Try adding a duplicate ID and confirm the program asks for another ID.
-5. Update an existing customer.
-6. Remove a customer.
-7. Exit and run the program again to confirm saved customers remain.
-
-Also test invalid input:
-
-- Enter letters when an ID is requested.
-- Enter an invalid email such as `hello`.
-- Enter a short phone number such as `123`.
-- Enter a blank name, email, or phone number.
+Open the project in a Java-compatible IDE and run:
 
 ```text
 src/com/customercontactmanager/Main.java
+```
+
+The program displays a menu in the console.
+
+## Running the Graphical Version
+
+Open and run:
+
+```text
+src/com/customercontactmanager/SwingMain.java
+```
+
+The graphical interface provides a customer table, search field, and buttons for adding, updating, removing, and refreshing records.
+
+## Testing the Program
+
+Try each menu option or GUI button:
+
+1. List or view the existing customers.
+2. Find a customer using an existing ID.
+3. Add a customer with a unique ID.
+4. Try adding a duplicate ID.
+5. Update an existing customer.
+6. Remove a customer.
+7. Close and reopen the program to confirm saved data remains.
+
+Also test invalid input:
+
+- Letters when a numeric ID is requested
+- An invalid email such as `hello`
+- A short phone number such as `123`
+- A blank name, email, or phone number
+- Updating or removing without selecting a GUI row
+
+## Data Storage
+
+Customer records are saved locally in `customers.csv`. This file is ignored by Git because it may contain personal information.
+
+## Developer
+
+Joshua Allgood
