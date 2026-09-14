@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerFileStorage {
+    // Store the path to the customer data file.
     private final Path filePath;
 
+    // Create storage using the supplied file name.
     public CustomerFileStorage(String fileName) {
         filePath = Paths.get(fileName);
     }
@@ -23,6 +25,7 @@ public class CustomerFileStorage {
         return Files.exists(filePath);
     }
 
+    // Load customer records from the CSV file.
     public List<Customer> loadCustomers() {
         List<Customer> customers = new ArrayList<>();
 
@@ -30,6 +33,7 @@ public class CustomerFileStorage {
             return customers;
         }
 
+        // Read each CSV line and convert into a Customer object.
         try {
             List<String> lines = Files.readAllLines(filePath);
 
@@ -39,7 +43,7 @@ public class CustomerFileStorage {
                 if (data.length != 4) {
                     continue;
                 }
-
+                // Convert the saved ID from text to an integer.
                 try {
                     int id = Integer.parseInt(data[0]);
 
@@ -62,9 +66,11 @@ public class CustomerFileStorage {
         return customers;
     }
 
+    // Save all customers to the CSV file.
     public void saveCustomers(List<Customer> customers) {
         List<String> lines = new ArrayList<>();
 
+        // Convert each customer into one CSV record.
         for (Customer customer : customers) {
             lines.add(
                     customer.getId() + ","
