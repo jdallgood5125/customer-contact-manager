@@ -94,6 +94,9 @@ The tests verify adding, finding, updating, removing, duplicate-ID protection, a
 
 Customer records are saved locally in `customers.csv`. This file is ignored by Git because it may contain personal information.
 
+## Application Preview
+
+![Customer Contact Manager Swing GUI](docs/images/swing-gui.png)
 ## Developer
 
 Joshua Allgood
