@@ -13,6 +13,9 @@ public class Main {
         CustomerFileStorage storage =
                 new CustomerFileStorage("customers.csv");
 
+        // Remember whether this is the first program run.
+        boolean firstRun = !storage.dataFileExists();
+
         // Create the manager and load saved customers.
         CustomerManager manager = new CustomerManager();
         List<Customer> savedCustomers = storage.loadCustomers();
@@ -21,8 +24,8 @@ public class Main {
             manager.addCustomer(customer);
         }
 
-        // Add starter customers if no saved data exists.
-        if (manager.getCustomers().isEmpty()) {
+        // Add starter customers only on the first run.
+        if (firstRun) {
             manager.addCustomer(new Customer(
                     1,
                     "John Smith",

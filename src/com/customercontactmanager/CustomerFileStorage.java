@@ -18,6 +18,11 @@ public class CustomerFileStorage {
         filePath = Paths.get(fileName);
     }
 
+    // Check whether the customer data file already exists.
+    public boolean dataFileExists() {
+        return Files.exists(filePath);
+    }
+
     public List<Customer> loadCustomers() {
         List<Customer> customers = new ArrayList<>();
 
