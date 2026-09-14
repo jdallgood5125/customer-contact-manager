@@ -33,7 +33,7 @@ public class CustomerFileStorage {
             return customers;
         }
 
-        // Read each CSV line and convert into a Customer object.
+        // Read each CSV line and convert it into a Customer object.
         try {
             List<String> lines = Files.readAllLines(filePath);
 
