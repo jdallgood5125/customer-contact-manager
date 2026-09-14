@@ -1,72 +1,93 @@
 // Developer: Joshua Allgood
-// Date: September 13, 2026
+// Date: September 14, 2026
 // Purpose: Provides a graphical interface for managing customers.
 
 package com.customercontactmanager;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.util.List;
 
+
 public class SwingMain {
-    // Manage customer records and save them to the CSV file.
+    // Manage customers and connect the table to saved data.
     private final CustomerManager manager;
     private final CustomerFileStorage storage;
     private final JTable customerTable;
+    private final JTextField searchField;
+    private TableRowSorter<DefaultTableModel> sorter;
 
-    // Build the window and connect the buttons to their actions.
+    // Build the window and connect the buttons.
     public SwingMain() {
         storage = new CustomerFileStorage("customers.csv");
         manager = new CustomerManager();
 
-        // Load existing customers when the program starts.
         loadCustomers();
 
-        // Create the customer table.
         customerTable = new JTable();
-        refreshTable();
-
         customerTable.setSelectionMode(
                 javax.swing.ListSelectionModel.SINGLE_SELECTION
         );
         customerTable.setRowHeight(28);
-        customerTable.setFont(
-                new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 14)
-        );
-        customerTable.getTableHeader().setFont(
-                new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+        refreshTable();
+
+        searchField = new JTextField(25);
+
+        // Filter the table whenever the search text changes.
+        searchField.getDocument().addDocumentListener(
+                new DocumentListener() {
+                    public void insertUpdate(DocumentEvent event) {
+                        filterTable();
+                    }
+
+                    public void removeUpdate(DocumentEvent event) {
+                        filterTable();
+                    }
+
+                    public void changedUpdate(DocumentEvent event) {
+                        filterTable();
+                    }
+                }
         );
 
-        // Create the action buttons.
         JButton addButton = new JButton("Add");
         JButton updateButton = new JButton("Update");
         JButton removeButton = new JButton("Remove");
         JButton refreshButton = new JButton("Refresh");
 
-        // Connect each button to its method.
         addButton.addActionListener(event -> addCustomer());
         updateButton.addActionListener(event -> updateCustomer());
         removeButton.addActionListener(event -> removeCustomer());
         refreshButton.addActionListener(event -> refreshTable());
 
-        // Place the buttons in a panel.
+        JPanel searchPanel = new JPanel();
+        searchPanel.add(new JLabel("Search:"));
+        searchPanel.add(searchField);
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(removeButton);
         buttonPanel.add(refreshButton);
 
-        // Create and display the application window.
         JFrame frame = new JFrame("Customer Contact Manager");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
+        frame.add(searchPanel, BorderLayout.NORTH);
         frame.add(new JScrollPane(customerTable), BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.setSize(850, 500);
@@ -101,7 +122,7 @@ public class SwingMain {
         }
     }
 
-    // Refresh the table using the current customer list.
+    // Rebuild the table using the current customer list.
     private void refreshTable() {
         String[] columns = {"ID", "Name", "Email", "Phone"};
         DefaultTableModel model =
@@ -117,72 +138,115 @@ public class SwingMain {
         }
 
         customerTable.setModel(model);
+
+        sorter = new TableRowSorter<>(model);
+        customerTable.setRowSorter(sorter);
     }
 
-    // Add a new customer after validating the input.
+    // Filter rows based on the search field.
+    private void filterTable() {
+        String text = searchField.getText().trim();
+
+        if (text.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(
+                    RowFilter.regexFilter(
+                            "(?i)" + java.util.regex.Pattern.quote(text)
+                    )
+            );
+        }
+    }
+
+    // Display a structured form for adding a customer.
     private void addCustomer() {
-        String idInput = readRequired(
-                "Enter customer ID:",
-                null
-        );
+        JTextField idField = new JTextField(25);
+        JTextField nameField = new JTextField(25);
+        JTextField emailField = new JTextField(25);
+        JTextField phoneField = new JTextField(25);
 
-        if (idInput == null) {
-            return;
-        }
+        JPanel formPanel = new JPanel(new GridLayout(0, 2, 8, 8));
 
-        int id;
+        formPanel.add(new JLabel("Customer ID:"));
+        formPanel.add(idField);
 
-        try {
-            id = Integer.parseInt(idInput);
-        } catch (NumberFormatException e) {
-            showMessage("Please enter a valid numeric ID.");
-            return;
-        }
+        formPanel.add(new JLabel("Name:"));
+        formPanel.add(nameField);
 
-        if (manager.findCustomerById(id) != null) {
-            showMessage("That customer ID already exists.");
-            return;
-        }
+        formPanel.add(new JLabel("Email:"));
+        formPanel.add(emailField);
 
-        String name = readRequired(
-                "Enter customer name:",
-                null
-        );
+        formPanel.add(new JLabel("Phone:"));
+        formPanel.add(phoneField);
 
-        if (name == null) {
-            return;
-        }
+        while (true) {
+            int result = JOptionPane.showConfirmDialog(
+                    null,
+                    formPanel,
+                    "Add Customer",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
 
-        String email = readEmail(
-                "Enter customer email:",
-                null
-        );
+            if (result != JOptionPane.OK_OPTION) {
+                return;
+            }
 
-        if (email == null) {
-            return;
-        }
+            try {
+                int id = Integer.parseInt(idField.getText().trim());
+                String name = nameField.getText().trim();
+                String email = emailField.getText().trim();
+                String phone = phoneField.getText().trim();
 
-        String phone = readPhone(
-                "Enter customer phone:",
-                null
-        );
+                if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+                    showMessage("All fields are required.");
+                    continue;
+                }
 
-        if (phone == null) {
-            return;
-        }
+                if (!isValidEmail(email)) {
+                    showMessage("Please enter a valid email address.");
+                    continue;
+                }
 
-        boolean added = manager.addCustomer(
-                new Customer(id, name, email, phone)
-        );
+                if (!isValidPhone(phone)) {
+                    showMessage("Please enter a valid phone number.");
+                    continue;
+                }
 
-        if (added) {
-            storage.saveCustomers(manager.getCustomers());
-            refreshTable();
-            showMessage("Customer added.");
+                if (manager.findCustomerById(id) != null) {
+                    showMessage("That customer ID already exists.");
+                    continue;
+                }
+
+                boolean added = manager.addCustomer(
+                        new Customer(id, name, email, phone)
+                );
+
+                if (added) {
+                    storage.saveCustomers(manager.getCustomers());
+                    refreshTable();
+                    showMessage("Customer added.");
+                }
+
+                return;
+
+            } catch (NumberFormatException e) {
+                showMessage("Customer ID must be a number.");
+            }
         }
     }
+    // Check basic email formatting.
+    private boolean isValidEmail(String email) {
+        return email.contains("@") && email.contains(".");
+    }
 
-    // Update the selected customer after validating the input.
+    // Check that the phone number contains at least seven digits.
+    private boolean isValidPhone(String phone) {
+        String digitsOnly = phone.replaceAll("\\D", "");
+        return digitsOnly.length() >= 7;
+    }
+
+    // Display a structured form for updating a customer.
     private void updateCustomer() {
         int row = customerTable.getSelectedRow();
 
@@ -191,47 +255,71 @@ public class SwingMain {
             return;
         }
 
-        int id = (int) customerTable.getValueAt(row, 0);
+        int modelRow = customerTable.convertRowIndexToModel(row);
+        int id = (int) customerTable.getModel().getValueAt(modelRow, 0);
         Customer customer = manager.findCustomerById(id);
 
-        String name = readRequired(
-                "Enter new name:",
-                customer.getName()
-        );
+        JTextField nameField = new JTextField(customer.getName(), 25);
+        JTextField emailField = new JTextField(customer.getEmail(), 25);
+        JTextField phoneField = new JTextField(customer.getPhone(), 25);
 
-        if (name == null) {
+        JPanel formPanel = new JPanel(new GridLayout(0, 2, 8, 8));
+
+        formPanel.add(new JLabel("Name:"));
+        formPanel.add(nameField);
+
+        formPanel.add(new JLabel("Email:"));
+        formPanel.add(emailField);
+
+        formPanel.add(new JLabel("Phone:"));
+        formPanel.add(phoneField);
+
+        while (true) {
+            int result = JOptionPane.showConfirmDialog(
+                    null,
+                    formPanel,
+                    "Update Customer",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (result != JOptionPane.OK_OPTION) {
+                return;
+            }
+
+            String name = nameField.getText().trim();
+            String email = emailField.getText().trim();
+            String phone = phoneField.getText().trim();
+
+            if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+                showMessage("All fields are required.");
+                continue;
+            }
+
+            if (!isValidEmail(email)) {
+                showMessage("Please enter a valid email address.");
+                continue;
+            }
+
+            if (!isValidPhone(phone)) {
+                showMessage("Please enter a valid phone number.");
+                continue;
+            }
+
+            boolean updated = manager.updateCustomer(
+                    id,
+                    name,
+                    email,
+                    phone
+            );
+
+            if (updated) {
+                storage.saveCustomers(manager.getCustomers());
+                refreshTable();
+                showMessage("Customer updated.");
+            }
+
             return;
-        }
-
-        String email = readEmail(
-                "Enter new email:",
-                customer.getEmail()
-        );
-
-        if (email == null) {
-            return;
-        }
-
-        String phone = readPhone(
-                "Enter new phone:",
-                customer.getPhone()
-        );
-
-        if (phone == null) {
-            return;
-        }
-
-        boolean updated = manager.updateCustomer(
-                id,
-                name,
-                email,
-                phone
-        );
-
-        if (updated) {
-            storage.saveCustomers(manager.getCustomers());
-            refreshTable();
-            showMessage("Customer updated.");
         }
     }
 
@@ -244,7 +332,8 @@ public class SwingMain {
             return;
         }
 
-        int id = (int) customerTable.getValueAt(row, 0);
+        int modelRow = customerTable.convertRowIndexToModel(row);
+        int id = (int) customerTable.getModel().getValueAt(modelRow, 0);
 
         int answer = JOptionPane.showConfirmDialog(
                 null,
@@ -290,7 +379,7 @@ public class SwingMain {
         }
     }
 
-    // Read and validate an email address.
+    // Validate an email address.
     private String readEmail(
             String prompt,
             String initialValue
@@ -311,7 +400,7 @@ public class SwingMain {
         }
     }
 
-    // Read and validate a phone number.
+    // Validate a phone number.
     private String readPhone(
             String prompt,
             String initialValue
@@ -334,12 +423,12 @@ public class SwingMain {
         }
     }
 
-    // Display a message to the user.
+    // Display a message dialog.
     private void showMessage(String message) {
         JOptionPane.showMessageDialog(null, message);
     }
 
-    // Start the Swing interface on the event-dispatch thread.
+    // Start the Swing application.
     public static void main(String[] args) {
         SwingUtilities.invokeLater(SwingMain::new);
     }
