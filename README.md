@@ -2,7 +2,7 @@
 
 This is a Java application I built to practice managing customer contact information.
 
-The project includes both a console version and a Swing graphical interface.
+The project includes a console version and a Swing graphical interface.
 
 ## Features
 
@@ -16,11 +16,14 @@ The project includes both a console version and a Swing graphical interface.
 - Search customers in the GUI
 - Use structured Add and Update forms
 - Save customer data between program runs
+- Automated tests for customer management and file storage
 
 ## Technologies
 
 - Java
 - Swing
+- Maven
+- JUnit 5
 - IntelliJ IDEA
 - Git and GitHub
 - CSV file storage
@@ -32,6 +35,8 @@ The project includes both a console version and a Swing graphical interface.
 - `Customer.java` represents a customer.
 - `CustomerManager.java` manages customer records.
 - `CustomerFileStorage.java` loads and saves customer data.
+- `CustomerManagerTest.java` tests customer management operations.
+- `CustomerFileStorageTest.java` tests CSV storage.
 
 ## Running the Console Version
 
@@ -72,6 +77,18 @@ Also test invalid input:
 - A short phone number such as `123`
 - A blank name, email, or phone number
 - Updating or removing without selecting a GUI row
+
+## Automated Tests
+
+The project uses JUnit 5 tests for customer management and CSV storage.
+
+To run the tests with Maven:
+
+```text
+mvn test
+```
+
+The tests verify adding, finding, updating, removing, duplicate-ID protection, and saving/loading customer records.
 
 ## Data Storage
 
