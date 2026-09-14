@@ -4,32 +4,47 @@
 
 package com.customercontactmanager;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // Create the manager and load the initial sample customers
+        // Connect to the customer data file.
+        CustomerFileStorage storage =
+                new CustomerFileStorage("customers.csv");
+
+        // Create the manager and load saved customers.
         CustomerManager manager = new CustomerManager();
+        List<Customer> savedCustomers = storage.loadCustomers();
 
-        manager.addCustomer(new Customer(
-                1,
-                "John Smith",
-                "john.smith@email.com",
-                "555-0101"
-        ));
+        for (Customer customer : savedCustomers) {
+            manager.addCustomer(customer);
+        }
 
-        manager.addCustomer(new Customer(
-                2,
-                "Jane Doe",
-                "jane.doe@email.com",
-                "555-0102"
-        ));
+        // Add starter customers if no saved data exists.
+        if (manager.getCustomers().isEmpty()) {
+            manager.addCustomer(new Customer(
+                    1,
+                    "John Smith",
+                    "john.smith@email.com",
+                    "555-0101"
+            ));
+
+            manager.addCustomer(new Customer(
+                    2,
+                    "Jane Doe",
+                    "jane.doe@email.com",
+                    "555-0102"
+            ));
+
+            storage.saveCustomers(manager.getCustomers());
+        }
 
         // Set up user input and the menu loop.
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
-        // Continue displaying the menu until the user chooses Exit.
+        // Continue until the user chooses Exit.
         while (running) {
             System.out.println("\nCustomer Contact Manager");
             System.out.println("1. List Customers");
@@ -39,7 +54,10 @@ public class Main {
             System.out.println("5. Remove Customer");
             System.out.println("6. Exit");
 
-            String choice = readText(scanner, "Choose an option: ");
+            String choice = readText(
+                    scanner,
+                    "Choose an option: "
+            );
 
             switch (choice) {
                 // Display all stored customers.
@@ -52,6 +70,7 @@ public class Main {
                         }
                     }
                     break;
+
                 // Find and display one customer by ID.
                 case "2":
                     int findId = readInt(
@@ -108,6 +127,7 @@ public class Main {
                             new Customer(newId, name, email, phone)
                     );
 
+                    storage.saveCustomers(manager.getCustomers());
                     System.out.println("Customer added.");
                     break;
 
@@ -148,6 +168,7 @@ public class Main {
                             updatedPhone
                     );
 
+                    storage.saveCustomers(manager.getCustomers());
                     System.out.println("Customer updated.");
                     break;
 
@@ -162,6 +183,7 @@ public class Main {
                             manager.removeCustomerById(removeId);
 
                     if (removed) {
+                        storage.saveCustomers(manager.getCustomers());
                         System.out.println("Customer removed.");
                     } else {
                         System.out.println("Customer not found.");
@@ -171,7 +193,7 @@ public class Main {
                 // End the application.
                 case "6":
                     running = false;
-                    System.out.println("Goodbye!");
+                    System.out.println("Goodbye.");
                     break;
 
                 default:
@@ -184,8 +206,11 @@ public class Main {
         scanner.close();
     }
 
-    // Read and validate numeric input
-    private static int readInt(Scanner scanner, String prompt) {
+    // Read and validate numeric input.
+    private static int readInt(
+            Scanner scanner,
+            String prompt
+    ) {
         while (true) {
             System.out.print(prompt);
             String input = scanner.nextLine();
@@ -198,8 +223,11 @@ public class Main {
         }
     }
 
-    // Read text text and reject blank values.
-    private static String readText(Scanner scanner, String prompt) {
+    // Read text input and reject blank values.
+    private static String readText(
+            Scanner scanner,
+            String prompt
+    ) {
         while (true) {
             System.out.print(prompt);
             String input = scanner.nextLine().trim();
@@ -212,8 +240,11 @@ public class Main {
         }
     }
 
-    // Validate that an email contains basic email characters.
-    private static String readEmail(Scanner scanner, String prompt) {
+    // Validate basic email formatting.
+    private static String readEmail(
+            Scanner scanner,
+            String prompt
+    ) {
         while (true) {
             String email = readText(scanner, prompt);
 
@@ -221,12 +252,17 @@ public class Main {
                 return email;
             }
 
-            System.out.println("Please enter a valid email address.");
+            System.out.println(
+                    "Please enter a valid email address."
+            );
         }
     }
 
-    // Validate that a phone number contains at least seven digits.
-    private static String readPhone(Scanner scanner, String prompt) {
+    // Validate that a phone number has at least seven digits.
+    private static String readPhone(
+            Scanner scanner,
+            String prompt
+    ) {
         while (true) {
             String phone = readText(scanner, prompt);
             String digitsOnly = phone.replaceAll("\\D", "");
@@ -235,7 +271,9 @@ public class Main {
                 return phone;
             }
 
-            System.out.println("Please enter a valid phone number.");
+            System.out.println(
+                    "Please enter a valid phone number."
+            );
         }
     }
 }

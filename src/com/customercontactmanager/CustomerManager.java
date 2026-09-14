@@ -5,6 +5,7 @@ package com.customercontactmanager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 public class CustomerManager {
     // Store customers in an in-memory list.
@@ -21,6 +22,7 @@ public class CustomerManager {
 
     // Return the current customer list.
     public List<Customer> getCustomers() {
+        customers.sort(Comparator.comparingInt(Customer::getId));
         return customers;
     }
 
