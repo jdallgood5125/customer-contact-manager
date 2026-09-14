@@ -33,6 +33,17 @@ public class SwingMain {
         customerTable = new JTable();
         refreshTable();
 
+        customerTable.setSelectionMode(
+                javax.swing.ListSelectionModel.SINGLE_SELECTION
+        );
+        customerTable.setRowHeight(28);
+        customerTable.setFont(
+                new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 14)
+        );
+        customerTable.getTableHeader().setFont(
+                new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14)
+        );
+
         // Create the action buttons.
         JButton addButton = new JButton("Add");
         JButton updateButton = new JButton("Update");
@@ -58,7 +69,7 @@ public class SwingMain {
         frame.setLayout(new BorderLayout());
         frame.add(new JScrollPane(customerTable), BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
-        frame.setSize(750, 400);
+        frame.setSize(850, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
